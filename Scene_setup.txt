@@ -1,0 +1,23 @@
+Camera:
+	x:	-1.103
+	y:	1.312
+	z:	4
+	up:	
+		x:	-1.103
+		y:	2.325
+		z:	4
+	aim:	
+		x:	-1.256
+		y:	1.026
+		z:	-3.945
+
+Checker: 
+	dimension: 	x:	5
+			y:	10
+	loc: 0 0 0
+Clear Sphere:
+	loc: 	-1.23  	1.443	-0.115
+	radius:	0.85
+Sphere:
+	loc:	-0.129	0.957	-0.997
+	radius:	0.65
