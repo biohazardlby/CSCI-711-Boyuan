@@ -13,7 +13,7 @@ Camera:
 
 Checker: 
 	dimension: 	x:	5
-			y:	10
+			z:	10
 	loc: 0 0 0
 Clear Sphere:
 	loc: 	-1.23  	1.443	-0.115
