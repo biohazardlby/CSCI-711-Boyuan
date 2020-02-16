@@ -13,10 +13,3 @@ GLint SCREEN_WIDTH = 640;
 GLint SCREEN_HEIGHT = 480;
 
 Scene *scene;
-
-class RayTracer
-{
-public:
-	RayTracer();
-	~RayTracer();
-};
