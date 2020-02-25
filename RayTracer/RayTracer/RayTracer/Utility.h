@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtx/vector_angle.hpp>
 #include <iostream>
@@ -21,10 +21,13 @@ struct vector {
 		return { res.x,res.y,res.z };
 	}
 	vector operator*(float f) {
-		return { x*f,y*f,z*f };
+		return { x * f,y * f,z * f };
 	}
 	vector operator/(float f) {
 		return { x / f,y / f,z / f };
+	}
+	vector operator+(vector v) {
+		return { x + v.x, y + v.y, z + v.z };
 	}
 };
 
@@ -65,26 +68,10 @@ struct Color {
 	float g;
 	float b;
 };
-
-class Camera {
-public:
-	vertex position;
-	vertex lookAt;
-	vertex up;
-
-	float screen_height;
-	float screen_width;
-	float rayTrace_plane_dist;
-	float viewAngle;
-	
-	float filmPlane_height;
-	float filmPlane_width;
-
-	void Camera_Trans_Matrix(glm::mat4& translate_matrix, glm::mat4 &rotation_matrix);
-	Camera(vertex position, vertex lookAt, vertex up, float width, float height, float rayTrace_plane_dist, float angleView);
-
-};
-
+Color operator*(Color c, float f);
+Color operator*(float f, Color c);
+template<typename T> T operator+(T t1, T t2);
+template<typename T, typename F> T operator/(T t, F f);
 void Print_Vertex(vertex v);
 void Print_Matrix(glm::mat4 mat);
 float rad_2_deg(float rad);
@@ -94,3 +81,17 @@ float vector_angle(vector v1, vector v2);
 float dot(vector v1, vector v2);
 vector cross(vector v1, vector v2);
 float length(vector v);
+
+Color phongShading(vertex lightPos, vector normal, vertex fragPos, vertex viewPos, Color lightColor, Color ambientColor, Color diffuseColor, float shininess);
+
+template<typename T>
+inline T operator+(T t1, T t2)
+{
+	return { t1.r + t2.r, t1.g + t2.g,t1.b + t2.b };
+}
+
+template<typename T, typename F>
+inline T operator/(T t, F f)
+{
+	return { t.r / f, t.g / f, t.b / f };
+}

@@ -13,7 +13,7 @@ Object::~Object()
 
 }
 
-bool Object::RayTrace(Ray & ray, vertex & hit_pt, float &distance)
+bool Object::RayTrace(Ray & ray, vertex & hit_pt, float &distance, vector& normal)
 {
 	return false;
 }
@@ -24,7 +24,7 @@ Sphere::Sphere(vertex origin, float radius) : Object(origin)
 }
 
 // Sphere //
-bool Sphere::RayTrace(Ray &ray, vertex &hit_pt, float &distance)
+bool Sphere::RayTrace(Ray &ray, vertex &hit_pt, float &distance, vector& normal)
 {
 	vector oc = ray.origin - this->origin;
 	float a = dot(ray.direction, ray.direction);
@@ -32,10 +32,10 @@ bool Sphere::RayTrace(Ray &ray, vertex &hit_pt, float &distance)
 	float c = dot(oc, oc) - radius * radius;
 	float discriminant = b * b - 4 * a*c;
 	hit_pt = ray.origin + ray.direction * ((-b - sqrt(discriminant)) / (2 * a));
+	normal = normalize(hit_pt - this->origin);
 	distance = ((-b - sqrt(discriminant)) / (2 * a));
 	return (discriminant > 0 && (-b - discriminant > 0));
 }
-
 
 // Polygon //
 
@@ -46,7 +46,7 @@ Triangle::Triangle(vertex v0, vertex v1, vertex v2) : Object(v0)
 	this->v2 = v2;
 }
 
-bool Triangle::RayTrace(Ray & ray, vertex & hit_pt, float & distance)
+bool Triangle::RayTrace(Ray & ray, vertex & hit_pt, float & distance, vector& normal)
 {
 //MOLLER_TRUMBORE 
 	vector v0v1 = v1 - v0;
@@ -76,6 +76,6 @@ bool Triangle::RayTrace(Ray & ray, vertex & hit_pt, float & distance)
 	
 	hit_pt = v0 + u * v0v1 + v * v0v1;
 	distance = length(hit_pt - ray.origin);
-
+	normal = normalize(cross(v0v1, v0v2));
 	return true;
 }

@@ -54,11 +54,17 @@ void RayTrace() {
 			for (int i = 0; i < obj_size; i++) {
 				Object* cur_obj = scene->objects.at(i);
 				float hit_distance;
-				if (cur_obj->RayTrace(*ray, *hit_pt, hit_distance)) {
+				vector normal;
+				if (cur_obj->RayTrace(*ray, *hit_pt, hit_distance,normal)) {
 					if (hit_distance <= rend_obj_dist) {
+						Light light = *scene->lights.at(0);
+
+						Color drawColor = phongShading(
+							light.position, normal, *hit_pt, scene->current_cam->position,
+							light.color, light.ambientColor, cur_obj->color, 16);
 						rend_obj = cur_obj;
 						rend_obj_dist = hit_distance;
-						Draw_Point(sx, sy, rend_obj->color);
+						Draw_Point(sx, sy, drawColor);
 					}
 				}
 			}
@@ -103,11 +109,11 @@ void Setup_Viewport() {
 void Scene_Construct() {
 	scene = new Scene();
 	Sphere *sphere1 = new Sphere({ -1.23,	1.443,	-0.115 }, 0.85);
-	sphere1->color = { 1,0,0 };
+	sphere1->color = { 0.5,0,0 };
 	scene->Add_Object(*sphere1);
 
 	Sphere *sphere2 = new Sphere({ -0.129,	0.957,	-0.997 }, 0.65);
-	sphere2->color = { 0,1,0 };
+	sphere2->color = { 0,0.5,0 };
 	scene->Add_Object(*sphere2);
 
 	Triangle *triangle1 = new Triangle(
@@ -125,6 +131,9 @@ void Scene_Construct() {
 	);
 	triangle2->color = { 0,0,1 };
 	scene->Add_Object(*triangle2);
+
+	Light* lightSource_1 = new Light({ -2,5,1 }, { .2,.2,.2 }, { .2,0,0 });
+	scene->Add_Light(*lightSource_1);
 
 	scene->current_cam = new Camera(
 		{ -1.103, 1.312, 4 },		//position

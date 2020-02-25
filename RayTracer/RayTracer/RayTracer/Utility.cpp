@@ -1,5 +1,15 @@
 #include "Utility.h"
 
+Color operator*(Color c, float f)
+{
+	return Color{c.r*f, c.g*f, c.b*f};
+}
+
+Color operator*(float f, Color c)
+{
+	return c * f;
+}
+
 void Print_Vertex(vertex v) {
 	using namespace std;
 	string output = "";
@@ -82,42 +92,16 @@ vertex operator*(vertex v, glm::mat4 mat) {
 	return { vec.x, vec.y, vec.z };
 }
 
-void Camera::Camera_Trans_Matrix(glm::mat4 & translate_matrix, glm::mat4 & rotation_matrix)
+Color phongShading(vertex lightPos, vector normal, vertex fragPos, vertex viewPos, Color lightColor, Color ambientColor, Color diffuseColor, float shininess)
 {
-	vector D = normalize(position - lookAt);
-	vector upVec = up - position;
-	vector R = normalize(cross(upVec, D));
-	vector U = cross(D, R);
-	vector P = { position.x,position.y,position.z };
-	rotation_matrix = {
-		R.x,U.x,D.x,0,
-		R.y,U.y,D.y,0,
-		R.z,U.z,D.z,0,
-		0,0,0,1
-	};
-	translate_matrix = {
-		1,0,0,-0,
-		0,1,0,0,
-		0,0,1,0,
-		-P.x,-P.y,-P.z,1
-	};
-}
+	vector lightDir = normalize(lightPos - fragPos);
+	vector viewDir = normalize(viewPos - fragPos);
+	vector halfwayDir = normalize(lightDir + viewDir);
+	float spec = pow(fmax(dot(normal, halfwayDir), 0.0), shininess);
+	Color specular = lightColor * spec;
 
-Camera::Camera(vertex position, vertex lookAt, vertex up, float width, float height, float rayTrace_plane_dist, float viewAngle)
-{
-	this->position = position;
-	this->lookAt = lookAt;
-	this->up = up;
-	this->screen_height = height;
-	this->screen_width = width;
-	this->rayTrace_plane_dist = rayTrace_plane_dist;
-	this->viewAngle = viewAngle;
-	if (width >= height) {
-		filmPlane_height = 2 * tan(deg_2_rad(viewAngle / 2))*rayTrace_plane_dist;
-		filmPlane_width = filmPlane_height * (screen_width / screen_height);
-	}
-	else {
-		filmPlane_width = 2 * tan(deg_2_rad(viewAngle / 2))*rayTrace_plane_dist;
-		filmPlane_height = filmPlane_width * (screen_height / screen_width);
-	}
+	float lambertian = fmax(dot(lightDir, normal), 0.0);
+	Color diffuse = lambertian * diffuseColor;
+
+	return (specular + diffuse + ambientColor);
 }
