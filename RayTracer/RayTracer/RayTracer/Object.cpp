@@ -79,3 +79,4 @@ bool Triangle::RayTrace(Ray & ray, vertex & hit_pt, float & distance, vector& no
 	normal = normalize(cross(v0v1, v0v2));
 	return true;
 }
+				
