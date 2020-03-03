@@ -92,6 +92,22 @@ vertex operator*(vertex v, glm::mat4 mat) {
 	return { vec.x, vec.y, vec.z };
 }
 
+Ray::Ray(vertex origin, vector direction, float length)
+{
+	this->origin = origin;
+	this->direction = direction;
+	this->length = length;
+}
+Ray::Ray(vertex origin, vector direction)
+{
+	this->origin = origin;
+	this->direction = direction;
+}
+Ray::~Ray()
+{
+}
+
+
 Color phongShading(vertex lightPos, vector normal, vertex fragPos, vertex viewPos, Color lightColor, Color ambientColor, Color diffuseColor, float shininess)
 {
 	vector lightDir = normalize(lightPos - fragPos);

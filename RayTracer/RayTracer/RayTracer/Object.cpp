@@ -74,7 +74,7 @@ bool Triangle::RayTrace(Ray & ray, vertex & hit_pt, float & distance, vector& no
 
 	t = dot(v0v2,qvec) * invDet;
 	
-	hit_pt = v0 + u * v0v1 + v * v0v1;
+	hit_pt = ray.origin + t * ray.direction;
 	distance = length(hit_pt - ray.origin);
 	normal = normalize(cross(v0v1, v0v2));
 	return true;

@@ -24,9 +24,6 @@
     <ClCompile Include="Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ray.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Utility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,9 +39,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utility.h">

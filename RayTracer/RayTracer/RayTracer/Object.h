@@ -1,5 +1,4 @@
 #pragma once
-#include "Ray.h"
 #include "Utility.h"
 
 class Object
@@ -7,6 +6,7 @@ class Object
 public:
 	vertex origin;
 	Color color = {0,0,0};
+	Color ambientColor = {0,0,.2};
 	Object(vertex origin);
 	~Object();
 	float specular = .2f;

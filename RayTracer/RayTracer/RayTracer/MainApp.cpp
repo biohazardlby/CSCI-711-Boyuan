@@ -20,13 +20,6 @@ void RayTrace() {
 
 	float scene_screen_ratio = cam->filmPlane_width / SCREEN_WIDTH;
 
-	//std::cout << "SCREEN_WIDTH = \t" << SCREEN_WIDTH << std::endl;
-	//std::cout << "SCREEN_HEIGHT = \t" << SCREEN_HEIGHT << std::endl;
-	//std::cout << "scene_screen_ratio = \t" << scene_screen_ratio << std::endl;
-	//std::cout << "filmplane_width = \t" << cam->filmPlane_width << std::endl;
-	//std::cout << "filmplane_height = \t" << cam->filmPlane_height << std::endl;
-	//std::cout << "focal length = \t" << cam->focalLength << std::endl;
-
 	for (int sx = 0; sx < SCREEN_WIDTH; sx++) {
 		for (int sy = 0; sy < SCREEN_HEIGHT; sy++) {
 			vertex rayOrigin = { 0,0,0 };
@@ -46,27 +39,56 @@ void RayTrace() {
  			vector rayDir = rayEnd - rayOrigin;
 			rayDir = normalize(rayDir);
 
-			vertex* hit_pt = new vertex{ 0,0,0 };
+
 			Ray *ray = new Ray(rayOrigin, rayDir);
-
-			Object* rend_obj;
+			vertex* fragPoint = NULL;
+			Object* rend_obj = NULL;
 			float rend_obj_dist = FLT_MAX;
-			for (int i = 0; i < obj_size; i++) {
-				Object* cur_obj = scene->objects.at(i);
+			vector fragPoint_normal;
+			for (int cur_obj_idx = 0; cur_obj_idx < obj_size; cur_obj_idx++) {
+				Object* cur_obj = scene->objects.at(cur_obj_idx);
 				float hit_distance;
-				vector normal;
-				if (cur_obj->RayTrace(*ray, *hit_pt, hit_distance,normal)) {
+				vector hit_normal;
+				vertex* hit_pt = new vertex{ 0,0,0 };
+				//Check if view ray hit current obj
+				if (cur_obj->RayTrace(*ray, *hit_pt, hit_distance, hit_normal)) {
+					//Check if it is the first object hit
 					if (hit_distance <= rend_obj_dist) {
-						Light light = *scene->lights.at(0);
-
-						Color drawColor = phongShading(
-							light.position, normal, *hit_pt, scene->current_cam->position,
-							light.color, light.ambientColor, cur_obj->color, 16);
 						rend_obj = cur_obj;
 						rend_obj_dist = hit_distance;
-						Draw_Point(sx, sy, drawColor);
+						fragPoint_normal = hit_normal;
+						fragPoint = hit_pt;
 					}
 				}
+			}
+			//start shading
+			if (rend_obj != NULL) {
+				Light light = *scene->lights.at(0);
+				//Check if light is blocked
+				Ray* fragPoint_2_light = new Ray(*fragPoint, normalize(light.position - *fragPoint));
+				bool blocked = false;
+				for (int block_obj_idx = 0; block_obj_idx < obj_size; block_obj_idx++) {
+					Object* block_obj = scene->objects.at(block_obj_idx);
+					if (block_obj != rend_obj) {
+						vertex block_hit_pt;
+						float block_distance;
+						vector block_normal;
+						if (block_obj->RayTrace(*fragPoint_2_light, block_hit_pt, block_distance, block_normal)) {
+							blocked = true;
+						}
+					}
+				}
+				Color drawColor;
+				if (blocked) {
+					drawColor = light.ambientColor;
+				}
+				else
+				{
+					drawColor = phongShading(
+						light.position, fragPoint_normal, *fragPoint, scene->current_cam->position,
+						light.color, light.ambientColor, rend_obj->color, 16);
+				}
+				Draw_Point(sx, sy, drawColor);
 			}
 		}
 	}
@@ -108,12 +130,16 @@ void Setup_Viewport() {
 }
 void Scene_Construct() {
 	scene = new Scene();
-	Sphere *sphere1 = new Sphere({ -1.23,	1.443,	-0.115 }, 0.85);
+	Sphere *sphere1 = new Sphere({ -1.23,	1.546,	-0.115 }, 0.85);
 	sphere1->color = { 0.5,0,0 };
+	sphere1->ambientColor = { 0.2,0,0 };
 	scene->Add_Object(*sphere1);
 
-	Sphere *sphere2 = new Sphere({ -0.129,	0.957,	-0.997 }, 0.65);
+	Sphere *sphere2 = new Sphere({ 0.078,	0.957,	-0.881 }, 0.65);
+
+	//Sphere *sphere2 = new Sphere({ -2,  2,   .5 }, 0.4);
 	sphere2->color = { 0,0.5,0 };
+	sphere2->ambientColor = { 0,.2,0 };
 	scene->Add_Object(*sphere2);
 
 	Triangle *triangle1 = new Triangle(
@@ -132,7 +158,7 @@ void Scene_Construct() {
 	triangle2->color = { 0,0,1 };
 	scene->Add_Object(*triangle2);
 
-	Light* lightSource_1 = new Light({ -2,5,1 }, { .2,.2,.2 }, { .2,0,0 });
+	Light* lightSource_1 = new Light({ -1.554,6.698,2.607 }, { .2,.2,.2 }, { .2,0,0 });
 	scene->Add_Light(*lightSource_1);
 
 	scene->current_cam = new Camera(

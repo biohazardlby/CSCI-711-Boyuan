@@ -10,6 +10,8 @@
 #define PI 3.14159265359
 #define kEpsilon 0.000001
 
+enum PrimitiveType {TRIANGLE, SPHERE};
+
 struct vector {
 	float x;
 	float y;
@@ -82,7 +84,23 @@ float dot(vector v1, vector v2);
 vector cross(vector v1, vector v2);
 float length(vector v);
 
+
+class Ray
+{
+public:
+	vertex origin;
+	vector direction;
+	float length = 0;
+
+	Ray(vertex origin, vector direction, float length);
+	Ray(vertex origin, vector direction);
+	~Ray();
+};
+
+
+
 Color phongShading(vertex lightPos, vector normal, vertex fragPos, vertex viewPos, Color lightColor, Color ambientColor, Color diffuseColor, float shininess);
+
 
 template<typename T>
 inline T operator+(T t1, T t2)
