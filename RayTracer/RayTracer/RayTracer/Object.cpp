@@ -37,7 +37,7 @@ bool Sphere::RayTrace(Ray &ray, vertex &hit_pt, float &distance, vector& normal)
 	return (discriminant > 0 && (-b - discriminant > 0));
 }
 
-// Polygon //
+// Triangle //
 
 Triangle::Triangle(vertex v0, vertex v1, vertex v2) : Object(v0)
 {
