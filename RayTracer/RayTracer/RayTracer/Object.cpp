@@ -31,10 +31,13 @@ bool Sphere::RayTrace(Ray &ray, vertex &hit_pt, float &distance, vector& normal)
 	float b = 2.0 * dot(oc, ray.direction);
 	float c = dot(oc, oc) - radius * radius;
 	float discriminant = b * b - 4 * a*c;
-	hit_pt = ray.origin + ray.direction * ((-b - sqrt(discriminant)) / (2 * a));
-	normal = normalize(hit_pt - this->origin);
-	distance = ((-b - sqrt(discriminant)) / (2 * a));
-	return (discriminant > 0 && (-b - discriminant > 0));
+	bool hit = (discriminant > 0 && (-b - discriminant > 0));
+	if (hit) {
+		hit_pt = ray.origin + ray.direction * ((-b - sqrt(discriminant)) / (2 * a));
+		normal = normalize(hit_pt - this->origin);
+		distance = ((-b - sqrt(discriminant)) / (2 * a));
+	}
+	return hit;
 }
 
 // Polygon //

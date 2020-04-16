@@ -38,7 +38,8 @@ public:
 	std::vector<Light*> lights ;
 	Camera *current_cam = nullptr;
 	Scene();
-	~Scene();
+	~Scene();	
 	bool Add_Object(Object &obj);
 	bool Add_Light(Light& light);
 };
+	

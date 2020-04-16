@@ -167,7 +167,7 @@ void Scene_Construct() {
 		{ -1.103, 2.325, 4 },		//up
 		SCREEN_WIDTH,				//width
 		SCREEN_HEIGHT,				//height
-		1000,							//rayTrace plane distance to camera
+		1000,						//rayTrace plane distance to camera
 		60							//angle of view
 	);
 }
